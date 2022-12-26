@@ -1,40 +1,35 @@
-version: '3.8'
+version: "2"
 services:
-  api-server:
+  app-isamm:
     container_name: app-isamm
     build: .
     command: npm run dev
     ports:
       - "8080:3000"
     links:
-      - postgre_db
+      - db-isamm
     depends_on:
-      - postgre_db
+      - db-isamm
     volumes:
       - ./:/usr/app/
       - /usr/app/node_modules
+    
 
-
-  postgre_db:
-    container_name: pg_container
-    image: postgres
-    restart: always
-    environment:
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: root
-      POSTGRES_DB: test_db
-    ports:
-      - "5432:5432"
+  db-isamm:
+    container_name: db-isamm
+    image: mongo
     volumes:
-      - ./pgdata:/var/lib/postgresql/data
-
-
-  pgadmin:
-    container_name: pgadmin4_container
-    image: dpage/pgadmin4
-    restart: always
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@admin.com
-      PGADMIN_DEFAULT_PASSWORD: root
+      - mongo:/data/db
     ports:
-      - "5050:80"
+      - '27018:27017'
+
+  postgres:
+    image: postgres
+    ports:
+      - "8081:8081"
+    restart: always
+    links:
+      - db-isamm
+    environment:
+      POSTGRES_PASSWORD: example
+
