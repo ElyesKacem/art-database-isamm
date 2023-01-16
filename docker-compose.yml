@@ -7,9 +7,9 @@ services:
     ports:
       - "8080:3000"
     links:
-      - db-isamm
+      - postgre_db
     depends_on:
-      - db-isamm
+      - postgre_db
     volumes:
       - ./:/usr/app/
       - /usr/app/node_modules
