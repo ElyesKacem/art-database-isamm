@@ -10,28 +10,38 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Post {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  title     String   @db.VarChar(255)
-  content   String?
-  published Boolean  @default(false)
-  author    User     @relation(fields: [authorId], references: [id])
-  authorId  Int
+enum Categorye {
+  Peinture
+  Sculpture
+  Arts
+  Photographie
+  Video
+  Textile
+  Installation
 }
 
-model Profile {
-  id     Int     @id @default(autoincrement())
-  bio    String?
-  user   User    @relation(fields: [userId], references: [id])
-  userId Int     @unique
+model Artist {
+  id         Int       @id @default(autoincrement())
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  fullName   String    @db.VarChar(255)
+  biography  String?
+  birthDate  DateTime?
+  deathDate  DateTime?
+  birthPlace String?
+  deathPlace String?
+  Artwork    Artwork[]
 }
 
-model User {
-  id      Int      @id @default(autoincrement())
-  email   String   @unique
-  name    String?
-  posts   Post[]
-  profile Profile?
+model Artwork {
+  id            Int      @id @default(autoincrement())
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  title         String   @db.VarChar(255)
+  content       String?
+  description   String?
+  creation_date DateTime
+  published     Boolean  @default(false)
+  artist        Artist   @relation(fields: [artistId], references: [id]) //this will not be shown in the database
+  artistId      Int // but this will be
 }
