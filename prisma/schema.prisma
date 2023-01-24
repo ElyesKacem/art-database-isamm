@@ -10,7 +10,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Categorye {
+enum Category {
   Peinture
   Sculpture
   Arts
@@ -38,10 +38,11 @@ model Artwork {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
   title         String   @db.VarChar(255)
+  category      Category
   content       String?
   description   String?
   creation_date DateTime
   published     Boolean  @default(false)
-  artist        Artist   @relation(fields: [artistId], references: [id]) //this will not be shown in the database
+  artist        Artist?  @relation(fields: [artistId], references: [id]) //this will not be shown in the database
   artistId      Int // but this will be
 }
