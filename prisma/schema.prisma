@@ -1,6 +1,21 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
+
+
+
+//********************************Problems**************************************
+// convert string type to date for patch and post requests
+// files upload
+//
+//
+//
+//
+//
+//
+//
+//
+//
 generator client {
   provider = "prisma-client-js"
 }
@@ -26,23 +41,82 @@ model Artist {
   updatedAt  DateTime  @updatedAt
   fullName   String    @db.VarChar(255)
   biography  String?
-  birthDate  DateTime?
-  deathDate  DateTime?
+  birthDate  DateTime? @db.Date
+  deathDate  DateTime? @db.Date
   birthPlace String?
   deathPlace String?
   Artwork    Artwork[]
 }
 
 model Artwork {
-  id            Int      @id @default(autoincrement())
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  title         String   @db.VarChar(255)
-  category      Category
-  content       String?
-  description   String?
-  creation_date DateTime
-  published     Boolean  @default(false)
-  artist        Artist?  @relation(fields: [artistId], references: [id]) //this will not be shown in the database
-  artistId      Int // but this will be
+  id                 Int                  @id @default(autoincrement())
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+  title              String               @db.VarChar(255)
+  category           Category
+  dimensions         String               @default("00x00")
+  dimensions3d       String               @default("00x00")
+  content            String               @default("")
+  description        String               @default("")
+  creation_date      DateTime?            @db.Date
+  published          Boolean              @default(false)
+  artist             Artist?              @relation(fields: [artistId], references: [id], onDelete: Cascade) //this will not be shown in the database
+  artistId           Int // but this will be
+  artworkLocation    ArtworkLocation[]
+  expositionLocation ExpositionLocation[]
+  restoration        Restoration[]
+}
+
+model Storage {
+  id              Int               @id @default(autoincrement())
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  location        String
+  locationRef     String            @unique
+  artworkLocation ArtworkLocation[]
+}
+
+model ArtworkLocation {
+  id          Int      @id @default(autoincrement())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  storageMode String
+  Artwork     Artwork? @relation(fields: [artworkId], references: [id])
+  artworkId   Int?
+  Storage     Storage? @relation(fields: [storageId], references: [id])
+  storageId   Int?
+}
+
+model ExpositionLocation {
+  id                  Int      @id @default(autoincrement())
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  expostion           String
+  expositionStartDate DateTime @db.Date
+  expositionEndDate   DateTime @db.Date
+  Artwork             Artwork? @relation(fields: [artworkId], references: [id])
+  artworkId           Int?
+}
+
+model Personnel {
+  id          Int           @id @default(autoincrement())
+  fullName    String
+  phoneNumber Int
+  email       String
+  restoration Restoration[]
+}
+
+model Restoration {
+  id                  Int        @id @default(autoincrement())
+  createdAt           DateTime   @default(now())
+  updatedAt           DateTime   @updatedAt
+  restorationDate     DateTime   @db.Date
+  restorationLocation String
+  report              String
+  type                String
+  description         String
+  Personnel           Personnel? @relation(fields: [personnelId], references: [id])
+  personnelId         Int?
+  Artwork             Artwork?   @relation(fields: [artworkId], references: [id])
+  artworkId           Int?
 }
