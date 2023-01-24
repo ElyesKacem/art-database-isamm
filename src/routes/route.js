@@ -48,7 +48,7 @@ router.patch('/artists/:id', async (req, res, next) => {
         const { id } = req.params;
         const data = req.body;
         const updatedArtist = await prisma.artist.update({
-            where:{
+            where: {
                 id: Number(id)
             },
             data: data
@@ -64,7 +64,7 @@ router.delete('/artists/:id', async (req, res, next) => {
         const { id } = req.params;
         console.log(id);
         const deletedArtist = await prisma.artist.delete({
-            where:{
+            where: {
                 id: Number(id)
             }
         })
@@ -105,7 +105,7 @@ router.post('/artworks', async (req, res, next) => {
         const artwork = await prisma.artwork.create({
             data: data
         });
-        res.send(artwork);
+        res.send({artwork, url: `/uploads/${req.file.originalname}` });
     } catch (error) {
         next(error);
     }
@@ -115,7 +115,7 @@ router.patch('/artworks/:id', async (req, res, next) => {
         const { id } = req.params;
         const data = req.body;
         const updatedArtwork = await prisma.artwork.update({
-            where:{
+            where: {
                 id: Number(id)
             },
             data: data
@@ -131,7 +131,7 @@ router.delete('/artworks/:id', async (req, res, next) => {
         const { id } = req.params;
         console.log(id);
         const deletedArtwork = await prisma.artwork.delete({
-            where:{
+            where: {
                 id: Number(id)
             }
         })
@@ -179,7 +179,7 @@ router.patch('/storages/:id', async (req, res, next) => {
         const { id } = req.params;
         const data = req.body;
         const updatedstorage = await prisma.storage.update({
-            where:{
+            where: {
                 id: Number(id)
             },
             data: data
@@ -195,7 +195,7 @@ router.delete('/storages/:id', async (req, res, next) => {
         const { id } = req.params;
         console.log(id);
         const deletedstorage = await prisma.storage.delete({
-            where:{
+            where: {
                 id: Number(id)
             }
         })
@@ -221,7 +221,7 @@ router.get('/artworkLocations/:id', async (req, res, next) => {
             where: {
                 id: Number(id)
             },
-            include: { Artwork: true,Storage: true }
+            include: { Artwork: true, Storage: true }
         });
         res.send(artworkLocation);
     } catch (error) {
@@ -244,7 +244,7 @@ router.patch('/artworkLocations/:id', async (req, res, next) => {
         const { id } = req.params;
         const data = req.body;
         const updatedArtworkLocation = await prisma.artworkLocation.update({
-            where:{
+            where: {
                 id: Number(id)
             },
             data: data
@@ -260,7 +260,7 @@ router.delete('/artworkLocations/:id', async (req, res, next) => {
         const { id } = req.params;
         console.log(id);
         const deletedArtworkLocation = await prisma.artworkLocation.delete({
-            where:{
+            where: {
                 id: Number(id)
             }
         })
