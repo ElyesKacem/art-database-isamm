@@ -4,6 +4,7 @@ const router = express.Router();
 const PrismaSingleton = require('../prismaSingleton');
 const prisma = PrismaSingleton.getInstance();
 const multer = require('multer');
+const { Category } = require('@prisma/client')
 
 
 
@@ -20,7 +21,13 @@ const upload = multer({ storage: storage });
 
 
 
-
+router.get('/categories', async (req, res, next) => {
+    try {
+        res.send({ categories: Category });
+    } catch (error) {
+        next(error);
+    }
+});
 //artist routes///////////////////////////////////////////////////////////////////////////////////////////////////////////
 router.get('/artists', async (req, res, next) => {
     try {
