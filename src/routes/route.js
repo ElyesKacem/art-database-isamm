@@ -132,9 +132,10 @@ router.post('/artworks', upload.single('file'), async (req, res, next) => {
     try {
         const data = JSON.parse(req.body.datata);
         console.log("testtttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt", data);
+        console.log("yoyoyoyoyoooooooooooooooooooooooooooo000000000000",data.creation_date);
         data.creation_date = new Date(data.creation_date);
         data.snapshotURL = `/uploads/${req.file.originalname}`
-        console.log( data.creation_date);
+        console.log("yoyoyoyoyoooooooooooooooooooooooooooo",data.creation_date);
         const artwork = await prisma.artwork.create({
             data: data
         });
@@ -429,6 +430,70 @@ router.delete('/restorations/:id', async (req, res, next) => {
             }
         })
         res.send(deletedRestoration)
+    } catch (error) {
+        next(error);
+    }
+});
+//expositionLocation routes///////////////////////////////////////////////////////////////////////////////////////////////////////////
+router.get('/expositionLocations', async (req, res, next) => {
+    try {
+        const expositionLocations = await prisma.expositionLocation.findMany();
+        res.send({ expositionLocations: expositionLocations });
+    } catch (error) {
+        next(error);
+    }
+});
+router.get('/expositionLocations/:id', async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const expositionLocation = await prisma.expositionLocation.findUnique({
+            where: {
+                id: Number(id)
+            },
+            include: { Artwork: true }
+        });
+        res.send(expositionLocation);
+    } catch (error) {
+        next(error);
+    }
+});
+router.post('/expositionLocations', async (req, res, next) => {
+    try {
+        const data = req.body;
+        const expositionLocation = await prisma.expositionLocation.create({
+            data: data
+        });
+        res.send(expositionLocation);
+    } catch (error) {
+        next(error);
+    }
+});
+router.patch('/expositionLocations/:id', async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const data = req.body;
+        const updatedExpositionLocation = await prisma.expositionLocation.update({
+            where: {
+                id: Number(id)
+            },
+            data: data
+            //you can use include: { Artwork: true } to include refrenced data
+        })
+        res.send(updatedExpositionLocation)
+    } catch (error) {
+        next(error);
+    }
+});
+router.delete('/expositionLocations/:id', async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        console.log(id);
+        const deletedExpositionLocation = await prisma.expositionLocation.delete({
+            where: {
+                id: Number(id)
+            }
+        })
+        res.send(deletedExpositionLocation)
     } catch (error) {
         next(error);
     }

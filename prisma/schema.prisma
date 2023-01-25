@@ -89,7 +89,7 @@ model ExpositionLocation {
   id                  Int      @id @default(autoincrement())
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
-  expostion           String
+  exposition           String
   expositionStartDate DateTime @db.Date
   expositionEndDate   DateTime @db.Date
   Artwork             Artwork? @relation(fields: [artworkId], references: [id])
