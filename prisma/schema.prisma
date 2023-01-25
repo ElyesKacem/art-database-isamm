@@ -1,9 +1,6 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-
-
-
 //********************************Problems**************************************
 // convert string type to date for patch and post requests
 // files upload
@@ -53,9 +50,10 @@ model Artwork {
   createdAt          DateTime             @default(now())
   updatedAt          DateTime             @updatedAt
   title              String               @db.VarChar(255)
+  snapshotURL        String?
   category           Category
   dimensions         String               @default("00x00")
-  dimensions3d       String               @default("00x00")
+  dimensions3d       String               @default("00x00x00")
   content            String               @default("")
   description        String               @default("")
   creation_date      DateTime?            @db.Date

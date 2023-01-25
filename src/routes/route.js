@@ -3,7 +3,23 @@ const express = require('express');
 const router = express.Router();
 const PrismaSingleton = require('../prismaSingleton');
 const prisma = PrismaSingleton.getInstance();
-//const prisma =new PrismaClient();
+const multer = require('multer');
+
+
+
+
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, './uploads/');
+    },
+    filename: function (req, file, cb) {
+        cb(null, file.originalname);
+    }
+});
+const upload = multer({ storage: storage });
+
+
+
 
 //artist routes///////////////////////////////////////////////////////////////////////////////////////////////////////////
 router.get('/artists', async (req, res, next) => {
@@ -89,23 +105,33 @@ router.get('/artworks/:id', async (req, res, next) => {
             where: {
                 id: Number(id)
             },
-            include: { artist: true }
+            include: {
+                artist: true,
+                artworkLocation: true,
+                expositionLocation: true,
+                restoration: {
+                    include: {
+                        Personnel: true
+                    }
+                }
+            }
         });
         res.send(artwork);
     } catch (error) {
         next(error);
     }
 });
-router.post('/artworks', async (req, res, next) => {
+router.post('/artworks', upload.single('file'), async (req, res, next) => {
     try {
-        const data = req.body;
-        console.log(data);
+        const data = JSON.parse(req.body.datata);
+        console.log("testtttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt", data);
         data.creation_date = new Date(data.creation_date);
-        console.log(data);
+        data.snapshotURL = `/uploads/${req.file.originalname}`
+        console.log( data.creation_date);
         const artwork = await prisma.artwork.create({
             data: data
         });
-        res.send({artwork, url: `/uploads/${req.file.originalname}` });
+        res.send({ artwork, url: `/uploads/${req.file.originalname}` });
     } catch (error) {
         next(error);
     }
@@ -265,6 +291,137 @@ router.delete('/artworkLocations/:id', async (req, res, next) => {
             }
         })
         res.send(deletedArtworkLocation)
+    } catch (error) {
+        next(error);
+    }
+});
+//personnel routes///////////////////////////////////////////////////////////////////////////////////////////////////////////
+router.get('/personnels', async (req, res, next) => {
+    try {
+        const personnels = await prisma.personnel.findMany();
+        res.send({ personnels: personnels });
+    } catch (error) {
+        next(error);
+    }
+});
+router.get('/personnels/:id', async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const personnel = await prisma.personnel.findUnique({
+            where: {
+                id: Number(id)
+            },
+            include: { restoration: true }
+        });
+        res.send(personnel);
+    } catch (error) {
+        next(error);
+    }
+});
+router.post('/personnels', async (req, res, next) => {
+    try {
+        const data = req.body;
+        console.log(data);
+        const personnel = await prisma.personnel.create({
+            data: data
+        });
+        res.send(personnel);
+    } catch (error) {
+        next(error);
+    }
+});
+router.patch('/personnels/:id', async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const data = req.body;
+        const updatedPersonnel = await prisma.personnel.update({
+            where: {
+                id: Number(id)
+            },
+            data: data
+            //you can use include: { "column_name": true } to include refrenced data
+        })
+        res.send(updatedPersonnel)
+    } catch (error) {
+        next(error);
+    }
+});
+router.delete('/personnels/:id', async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        console.log(id);
+        const deletedPersonnel = await prisma.personnel.delete({
+            where: {
+                id: Number(id)
+            }
+        })
+        res.send(deletedPersonnel)
+    } catch (error) {
+        next(error);
+    }
+});
+//restoration routes///////////////////////////////////////////////////////////////////////////////////////////////////////////
+router.get('/restorations', async (req, res, next) => {
+    try {
+        const restorations = await prisma.restoration.findMany();
+        res.send({ restorations: restorations });
+    } catch (error) {
+        next(error);
+    }
+});
+router.get('/restorations/:id', async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const restoration = await prisma.restoration.findUnique({
+            where: {
+                id: Number(id)
+            },
+            include: { Personnel: true, Artwork: true }
+        });
+        res.send(restoration);
+    } catch (error) {
+        next(error);
+    }
+});
+router.post('/restorations', async (req, res, next) => {
+    try {
+        const data = req.body;
+        console.log(data);
+        data.restorationDate = new Date(data.restorationDate);
+        const restoration = await prisma.restoration.create({
+            data: data
+        });
+        res.send(restoration);
+    } catch (error) {
+        next(error);
+    }
+});
+router.patch('/restorations/:id', async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const data = req.body;
+        const updatedRestoration = await prisma.restoration.update({
+            where: {
+                id: Number(id)
+            },
+            data: data
+            //you can use include: { "column_name": true } to include refrenced data
+        })
+        res.send(updatedRestoration)
+    } catch (error) {
+        next(error);
+    }
+});
+router.delete('/restorations/:id', async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        console.log(id);
+        const deletedRestoration = await prisma.restoration.delete({
+            where: {
+                id: Number(id)
+            }
+        })
+        res.send(deletedRestoration)
     } catch (error) {
         next(error);
     }
