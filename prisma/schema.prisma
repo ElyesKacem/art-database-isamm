@@ -79,9 +79,9 @@ model ArtworkLocation {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   storageMode String
-  Artwork     Artwork? @relation(fields: [artworkId], references: [id])
+  Artwork     Artwork? @relation(fields: [artworkId], references: [id], onDelete: Cascade)
   artworkId   Int?
-  Storage     Storage? @relation(fields: [storageId], references: [id])
+  Storage     Storage? @relation(fields: [storageId], references: [id], onDelete: Cascade)
   storageId   Int?
 }
 
@@ -89,10 +89,10 @@ model ExpositionLocation {
   id                  Int      @id @default(autoincrement())
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
-  exposition           String
+  exposition          String
   expositionStartDate DateTime @db.Date
   expositionEndDate   DateTime @db.Date
-  Artwork             Artwork? @relation(fields: [artworkId], references: [id])
+  Artwork             Artwork? @relation(fields: [artworkId], references: [id], onDelete: Cascade)
   artworkId           Int?
 }
 
@@ -113,8 +113,8 @@ model Restoration {
   report              String
   type                String
   description         String
-  Personnel           Personnel? @relation(fields: [personnelId], references: [id])
+  Personnel           Personnel? @relation(fields: [personnelId], references: [id], onDelete: Cascade)
   personnelId         Int?
-  Artwork             Artwork?   @relation(fields: [artworkId], references: [id])
+  Artwork             Artwork?   @relation(fields: [artworkId], references: [id], onDelete: Cascade)
   artworkId           Int?
 }
